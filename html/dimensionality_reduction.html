@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dimensionality Reduction Explained</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <!-- MathJax Library -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Smooth transitions for content */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4 font-sans">
+
+    <!-- Main Card Container -->
+    <div
+        class="bg-white max-w-4xl w-full rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row h-[650px]">
+
+        <!-- Left Side: Text and Explanations -->
+        <div
+            class="w-full md:w-5/12 p-8 flex flex-col justify-between bg-white z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+            <div>
+                <div class="flex items-center space-x-2 mb-6">
+                    <span
+                        class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider"
+                        id="step-badge">Step 1 of 5</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-4 leading-tight" id="step-title">The Concept</h1>
+                <div class="text-slate-600 space-y-4 text-base leading-relaxed" id="step-description">
+                    <!-- Text injected by JS -->
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="mt-8 flex justify-between items-center pt-6 border-t border-gray-100">
+                <button id="btn-back"
+                    class="px-5 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                    &larr; Back
+                </button>
+                <div class="flex space-x-1.5" id="step-dots">
+                    <!-- Dots injected by JS -->
+                </div>
+                <button id="btn-next"
+                    class="px-5 py-2.5 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-30 disabled:cursor-not-allowed">
+                    Next &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Side: Visualizations -->
+        <div
+            class="w-full md:w-7/12 bg-slate-50 relative flex items-center justify-center p-6 border-l border-gray-100">
+            <!-- Canvas for Data Visualization -->
+            <canvas id="viz-canvas" width="500" height="500" class="max-w-full h-auto drop-shadow-sm hidden"></canvas>
+
+            <!-- Div for Math Equations -->
+            <div id="math-container"
+                class="hidden w-full h-full flex items-center justify-center flex-col p-8 text-slate-800 text-lg">
+                <!-- Math injected by JS -->
+            </div>
+
+            <!-- Simple Illustration for Intro -->
+            <div id="intro-container" class="hidden text-center flex-col items-center">
+                <svg class="w-48 h-48 text-indigo-400 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                        d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                </svg>
+                <p class="text-slate-500 font-medium italic">Simplifying complexity without losing the essence.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/dimensionality_reduction.js"></script>
+</body>
+
+</html>

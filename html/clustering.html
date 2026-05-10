@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustering Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax for rendering mathematical equations -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Smooth fade transitions */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800 font-sans min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div
+        class="max-w-5xl w-full bg-white border border-gray-100 shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row">
+
+        <!-- Left Panel: Explanations and Controls -->
+        <div class="w-full md:w-1/2 p-8 flex flex-col justify-between border-r border-gray-100 bg-gray-50/30">
+            <div>
+                <span class="text-sm font-bold tracking-wider text-blue-600 uppercase mb-2 block">Unsupervised
+                    Learning</span>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-6">K-Means Clustering</h1>
+
+                <div id="step-content" class="min-h-[200px]">
+                    <h2 id="step-title" class="text-xl font-bold text-gray-800 mb-3">1. Raw Data</h2>
+                    <p id="step-desc" class="text-gray-600 leading-relaxed text-lg">
+                        In unsupervised learning, we start with unlabeled data. We want the computer to find patterns on
+                        its own. Notice how these points naturally form groups, but the computer doesn't know that yet.
+                    </p>
+
+                    <!-- Equation Container (Hidden by default) -->
+                    <div id="equation-container"
+                        class="hidden mt-6 p-4 bg-white border border-blue-100 rounded-lg shadow-sm">
+                        <p class="text-sm text-gray-500 mb-2 font-medium">Objective Function (Inertia):</p>
+                        <div class="overflow-x-auto">
+                            $$J = \sum_{j=1}^{K} \sum_{i \in C_j} || x_i - \mu_j ||^2$$
+                        </div>
+                        <ul class="text-sm text-gray-600 mt-3 space-y-1">
+                            <li><span class="font-bold">\( J \)</span> = Total variance (we want this to be small)</li>
+                            <li><span class="font-bold">\( K \)</span> = Number of clusters</li>
+                            <li><span class="font-bold">\( x_i \)</span> = A data point</li>
+                            <li><span class="font-bold">\( \mu_j \)</span> = The centroid (center) of cluster \( j \)
+                            </li>
+                            <li><span class="font-bold">\( || x_i - \mu_j ||^2 \)</span> = Squared distance from point
+                                to center</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+                <button id="btn-prev"
+                    class="px-5 py-2.5 rounded-lg font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                    &larr; Back
+                </button>
+
+                <div class="flex space-x-2">
+                    <!-- Step Indicators -->
+                    <div class="h-2 w-2 rounded-full bg-blue-600 indicator"></div>
+                    <div class="h-2 w-2 rounded-full bg-gray-300 indicator"></div>
+                    <div class="h-2 w-2 rounded-full bg-gray-300 indicator"></div>
+                    <div class="h-2 w-2 rounded-full bg-gray-300 indicator"></div>
+                    <div class="h-2 w-2 rounded-full bg-gray-300 indicator"></div>
+                    <div class="h-2 w-2 rounded-full bg-gray-300 indicator"></div>
+                </div>
+
+                <button id="btn-next"
+                    class="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 shadow-md shadow-blue-500/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                    Next Step &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Canvas Visualization -->
+        <div class="w-full md:w-1/2 p-8 flex items-center justify-center bg-white">
+            <div
+                class="relative w-full aspect-[5/4] bg-white border-2 border-dashed border-gray-200 rounded-xl overflow-hidden flex items-center justify-center">
+                <canvas id="clusterCanvas" width="500" height="400" class="max-w-full h-auto"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/clustering.js"></script>
+</body>
+
+</html>
