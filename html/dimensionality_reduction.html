@@ -5,26 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dimensionality Reduction Explained</title>
+
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Polyfill for older browsers -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
-    <!-- MathJax Configuration -->
+    <!-- MathJax Configuration for rendering beautiful math equations -->
     <script>
-        MathJax = {
+        window.MathJax = {
             tex: {
                 inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
             },
-            svg: {
-                fontCache: 'global'
+            svg: { fontCache: 'global' },
+            startup: {
+                typeset: false // We will manually trigger typesetting when steps change
             }
         };
     </script>
-    <!-- MathJax Library -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* Smooth transitions for content */
+        /* Smooth transitions for content fading */
         .fade-enter {
             opacity: 0;
             transform: translateY(10px);
@@ -33,67 +38,99 @@
         .fade-enter-active {
             opacity: 1;
             transform: translateY(0);
-            transition: opacity 300ms, transform 300ms;
+            transition: opacity 400ms ease-out, transform 400ms ease-out;
+        }
+
+        /* Custom scrollbar for left panel if content gets too long */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4 font-sans">
+<body
+    class="bg-slate-100 min-h-screen flex items-center justify-center p-4 font-sans selection:bg-indigo-200 selection:text-indigo-900">
 
     <!-- Main Card Container -->
     <div
-        class="bg-white max-w-4xl w-full rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row h-[650px]">
+        class="bg-white max-w-6xl w-full rounded-3xl shadow-2xl overflow-hidden border border-slate-200 flex flex-col md:flex-row h-[85vh] min-h-[700px]">
 
         <!-- Left Side: Text and Explanations -->
         <div
-            class="w-full md:w-5/12 p-8 flex flex-col justify-between bg-white z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-            <div>
+            class="w-full md:w-5/12 p-8 flex flex-col justify-between bg-white z-10 shadow-[8px_0_30px_rgba(0,0,0,0.03)] h-full relative">
+            <div class="overflow-y-auto custom-scrollbar pr-4 -mr-4 h-full pb-20">
                 <div class="flex items-center space-x-2 mb-6">
                     <span
-                        class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider"
-                        id="step-badge">Step 1 of 5</span>
+                        class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm"
+                        id="step-badge">
+                        Step 1
+                    </span>
                 </div>
-                <h1 class="text-3xl font-extrabold text-slate-800 mb-4 leading-tight" id="step-title">The Concept</h1>
-                <div class="text-slate-600 space-y-4 text-base leading-relaxed" id="step-description">
-                    <!-- Text injected by JS -->
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-6 leading-tight" id="step-title">The Concept</h1>
+                <div class="text-slate-600 space-y-5 text-base leading-relaxed" id="step-description">
+                    <!-- Text content dynamically injected by JS -->
                 </div>
             </div>
 
-            <!-- Navigation Controls -->
-            <div class="mt-8 flex justify-between items-center pt-6 border-t border-gray-100">
+            <!-- Navigation Controls fixed at the bottom of the left panel -->
+            <div
+                class="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm p-6 border-t border-slate-100 flex justify-between items-center">
                 <button id="btn-back"
-                    class="px-5 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-                    &larr; Back
+                    class="px-5 py-2.5 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center space-x-2">
+                    <span>&larr;</span> <span>Back</span>
                 </button>
-                <div class="flex space-x-1.5" id="step-dots">
+                <div class="flex space-x-2 hidden sm:flex" id="step-dots">
                     <!-- Dots injected by JS -->
                 </div>
                 <button id="btn-next"
-                    class="px-5 py-2.5 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-30 disabled:cursor-not-allowed">
-                    Next &rarr;
+                    class="px-6 py-2.5 rounded-xl font-semibold bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center space-x-2">
+                    <span>Next</span> <span>&rarr;</span>
                 </button>
             </div>
         </div>
 
-        <!-- Right Side: Visualizations -->
+        <!-- Right Side: Visualizations and Math -->
         <div
-            class="w-full md:w-7/12 bg-slate-50 relative flex items-center justify-center p-6 border-l border-gray-100">
+            class="w-full md:w-7/12 bg-slate-50 relative flex items-center justify-center p-6 border-l border-slate-200 overflow-hidden">
+
+            <!-- Grid Background for aesthetics -->
+            <div class="absolute inset-0 z-0 opacity-[0.03]"
+                style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+
             <!-- Canvas for Data Visualization -->
-            <canvas id="viz-canvas" width="500" height="500" class="max-w-full h-auto drop-shadow-sm hidden"></canvas>
+            <canvas id="viz-canvas" width="600" height="600"
+                class="max-w-full h-auto drop-shadow-md hidden z-10 bg-white rounded-2xl border border-slate-200"></canvas>
 
             <!-- Div for Math Equations -->
             <div id="math-container"
-                class="hidden w-full h-full flex items-center justify-center flex-col p-8 text-slate-800 text-lg">
+                class="hidden w-full h-full z-10 flex flex-col items-center justify-center p-8 text-slate-800 overflow-y-auto custom-scrollbar">
                 <!-- Math injected by JS -->
             </div>
 
             <!-- Simple Illustration for Intro -->
-            <div id="intro-container" class="hidden text-center flex-col items-center">
-                <svg class="w-48 h-48 text-indigo-400 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                        d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                </svg>
-                <p class="text-slate-500 font-medium italic">Simplifying complexity without losing the essence.</p>
+            <div id="intro-container" class="hidden text-center flex-col items-center z-10">
+                <div class="bg-indigo-100 p-6 rounded-full mb-8 shadow-inner border border-indigo-200">
+                    <svg class="w-24 h-24 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-700 mb-2">Dimensionality Reduction</h2>
+                <p class="text-slate-500 font-medium max-w-md">Distilling massive amounts of information down to its
+                    most important, story-telling elements using Mathematics.</p>
             </div>
         </div>
     </div>
