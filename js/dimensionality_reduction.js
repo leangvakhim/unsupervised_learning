@@ -1,3 +1,4 @@
+// <!-- Embedded JavaScript -->
 // --- 1. Data and State Setup ---
 
 // Our specific 3-student scenario
@@ -74,16 +75,54 @@ const steps = [
         drawPhase: 'centering'
     },
     {
-        title: "Step 2: The Covariance Matrix",
-        text: `<p>Now we calculate how these variables move together. This gives us the <b>Covariance Matrix ($S$)</b>.</p>
+        title: "Step 2: Calculating Variances & Covariance",
+        text: `<p>Using our newly centered data: <b>S1(-2, -1), S2(0, 1), S3(2, 0)</b>, we can calculate how the data varies.</p>
+                <p>Because this is a sample of students ($n = 3$), we divide our sums by $n - 1$ (which is $2$).</p>
+                <ul class="list-disc pl-5 mt-3 space-y-2">
+                    <li><b>Variance of X:</b> How much does study time vary?</li>
+                    <li><b>Variance of Y:</b> How much do quiz scores vary?</li>
+                    <li><b>Covariance (X,Y):</b> How do they move <i>together</i>?</li>
+                </ul>`,
+        view: 'math',
+        mathContent: `
+            <div class="w-full max-w-2xl bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-700 mb-6 text-center">The Math Behind the Relationships</h3>
+                <div class="space-y-6">
+                    <!-- Var(X) -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <p class="font-semibold text-slate-700 mb-2">1. Variance of X</p>
+                        <div class="overflow-x-auto text-sm sm:text-base">
+                            $$Var(X) = \\frac{(-2)^2 + (0)^2 + (2)^2}{3 - 1} = \\frac{4 + 0 + 4}{2} = \\mathbf{4}$$
+                        </div>
+                    </div>
+                    <!-- Var(Y) -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <p class="font-semibold text-slate-700 mb-2">2. Variance of Y</p>
+                        <div class="overflow-x-auto text-sm sm:text-base">
+                            $$Var(Y) = \\frac{(-1)^2 + (1)^2 + (0)^2}{3 - 1} = \\frac{1 + 1 + 0}{2} = \\mathbf{1}$$
+                        </div>
+                    </div>
+                    <!-- Cov(X,Y) -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <p class="font-semibold text-slate-700 mb-2">3. Covariance of X and Y</p>
+                        <div class="overflow-x-auto text-sm sm:text-base">
+                            $$Cov(X,Y) = \\frac{(-2)(-1) + (0)(1) + (2)(0)}{3 - 1} = \\frac{2 + 0 + 0}{2} = \\mathbf{1}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        title: "Step 3: Building the Covariance Matrix",
+        text: `<p>Now we organize the variance and covariance values we just calculated into the <b>Covariance Matrix ($S$)</b>.</p>
                 <p>Think of this matrix like a distance chart on a map, where the rows and columns are your variables (X and Y).</p>
-                <p>Using the variance formula, we find:</p>
-                <ul class="list-disc pl-5 space-y-1">
+                <ul class="list-disc pl-5 mt-2 space-y-1">
                     <li>Variance of X = <b>4</b> (Top-Left)</li>
                     <li>Variance of Y = <b>1</b> (Bottom-Right)</li>
                     <li>Covariance of X & Y = <b>1</b> (Top-Right & Bottom-Left)</li>
                 </ul>
-                <p class="mt-4">This perfectly organizes our data's relationships into a $2 \\times 2$ mathematical grid.</p>`,
+                <p class="mt-4">This perfectly organizes our data's relationships into a compact $2 \\times 2$ mathematical grid.</p>`,
         view: 'math',
         mathContent: `
             <div class="w-full max-w-2xl bg-white p-6 rounded-xl shadow-sm border border-slate-200">
@@ -117,7 +156,7 @@ const steps = [
         `
     },
     {
-        title: "Step 3: Finding Eigenvalues",
+        title: "Step 4: Finding Eigenvalues",
         text: `<p>To find the new "best angle" for our data, we extract <b>Eigenvectors</b> (directions) and <b>Eigenvalues</b> (importance/variance) from our matrix.</p>
                 <p>We solve the determinant equation: $\\det(S - \\lambda I) = 0$</p>
                 <p>This results in the quadratic equation: $\\lambda^2 - 5\\lambda + 3 = 0$</p>
@@ -141,9 +180,45 @@ const steps = [
         `
     },
     {
-        title: "Step 4: The Magic 1.04 (Normalization)",
-        text: `<p>By plugging our top eigenvalue (4.30) back into the equation, we get a raw directional vector of $(1, 0.30)$.</p>
-                <p>But we must <b>Normalize</b> it. We need a "Unit Vector" with a length of exactly 1.0 so we don't accidentally multiply and stretch our data later.</p>
+        title: "Step 5: Finding the Raw Vector",
+        text: `<p>To find our actual direction (the <b>Eigenvector</b> $\\mathbf{v}$), we plug our top eigenvalue ($\\lambda = 4.30$) back into the standard equation: $(S - \\lambda I)\\mathbf{v} = 0$.</p>
+                <p>This translates to subtracting $4.30$ from the diagonal of our Covariance Matrix, resulting in a system of linear equations.</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1">
+                    <li>This gives us: $-0.30x + y = 0$, which simplifies to $y = 0.30x$.</li>
+                </ul>
+                <p class="mt-3">An eigenvector defines a <i>direction</i>, not a specific length. This means there are infinitely many vectors that point along this line (they are scaled versions of each other).</p>
+                <p>To get a concrete "raw" vector, we pick an arbitrary value for $x$. The standard practice is to simply set $\\mathbf{x = 1}$.</p>
+                <ul class="list-none space-y-1 font-mono text-sm bg-slate-50 p-3 rounded mt-2">
+                    <li>If $x = 1$, then $y = 0.30(1) = 0.30$.</li>
+                </ul>
+                <p class="mt-3">This gives us our raw vector: $\\mathbf{v} = [1, 0.30]^T$.</p>`,
+        view: 'math',
+        mathContent: `
+            <div class="w-full max-w-2xl bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-700 mb-4 text-center">Solving the Equation</h3>
+                <div class="overflow-x-auto text-sm sm:text-base mb-6 text-center">
+                    $$ \\begin{bmatrix} 4 - 4.30 & 1 \\\\ 1 & 1 - 4.30 \\end{bmatrix} \\begin{bmatrix} x \\\\ y \\end{bmatrix} = \\begin{bmatrix} 0 \\\\ 0 \\end{bmatrix} $$
+                </div>
+                <div class="overflow-x-auto text-sm sm:text-base mb-4 text-center text-slate-600">
+                    $$ \\begin{bmatrix} -0.30 & 1 \\\\ 1 & -3.30 \\end{bmatrix} \\begin{bmatrix} x \\\\ y \\end{bmatrix} = \\begin{bmatrix} 0 \\\\ 0 \\end{bmatrix} $$
+                </div>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 mt-4">
+                    <p class="font-semibold text-slate-700 mb-2">System of Equations:</p>
+                    <p class="font-mono text-center mb-2">1) $-0.30x + y = 0 \\implies \\mathbf{y = 0.30x}$</p>
+                    <p class="font-mono text-center text-slate-400 text-sm">2) $1x - 3.30y = 0$ <span class="italic">(Yields the same ratio)</span></p>
+                    <div class="mt-4 pt-4 border-t border-slate-200">
+                        <p class="text-center font-semibold text-indigo-700">Set $x = 1$ to find the raw vector:</p>
+                        <div class="text-xl font-bold text-center mt-2">
+                            $$ \\mathbf{v}_{raw} = \\begin{bmatrix} 1 \\\\ 0.30 \\end{bmatrix} $$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        title: "Step 6: The Magic 1.04 (Normalization)",
+        text: `<p>Now that we have our raw directional vector of $(1, 0.30)$, we must <b>Normalize</b> it. We need a "Unit Vector" with a length of exactly 1.0 so we don't accidentally multiply and stretch our data later.</p>
                 <p>We use the Pythagorean theorem ($a^2 + b^2 = c^2$) to find the raw length (hypotenuse):</p>
                 <p class="bg-slate-50 p-3 rounded font-mono text-center">$\\sqrt{1^2 + 0.30^2} \\approx \\sqrt{1.09} \\approx 1.04$</p>
                 <p>Finally, we divide our raw coordinates by 1.04 to shrink the vector's length to exactly 1.0 without changing its direction.</p>
@@ -162,10 +237,11 @@ const steps = [
                     <!-- Draw a quick CSS triangle to represent the vector -->
                     <div class="absolute bottom-0 left-0 border-t-2 border-r-2 border-indigo-500 w-full h-[30%] opacity-20"></div>
                     <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                        <line x1="0" y1="100" x2="96" y2="71" stroke="#4f46e5" stroke-width="3"/>
-                        <polygon points="96,71 90,75 92,67" fill="#4f46e5" />
+                        <line x1="0" y1="100" x2="99" y2="70" stroke="#4f46e5" stroke-width="3"/>
+                        <polygon points="99,70 91,75 94,70 91,65" fill="#4f46e5" transform="rotate(-16.8, 98, 60)" />
+
                         <text x="50" y="95" class="text-[10px]" fill="#64748b">x = 0.96</text>
-                        <text x="98" y="85" class="text-[10px]" fill="#64748b">y = 0.29</text>
+                        <text x="1" y="80" class="text-[10px]" fill="#64748b">y = 0.29</text>
                     </svg>
                 </div>
                 <p class="text-xs text-slate-400 mt-4">Length is exactly 1.0</p>
@@ -181,7 +257,7 @@ const steps = [
         drawPhase: 'pca_line'
     },
     {
-        title: "Step 5: The Final Projection",
+        title: "Step 7: The Final Projection",
         text: `<p>Finally, we map our original 3 students onto this new single axis by calculating the dot product of their centered data and our eigenvector.</p>
                 <ul class="list-disc pl-5 mt-2 space-y-2 text-sm">
                     <li><b>S1:</b> $(-2 \\times 0.96) + (-1 \\times 0.29) = \\mathbf{-2.21}$</li>
@@ -194,9 +270,9 @@ const steps = [
         drawPhase: 'projection'
     },
     {
-        title: "Step 6: Explained Variance",
+        title: "Step 8: Explained Variance",
         text: `<p>We previously mentioned that our 1D projection preserved <b>86%</b> of the original data's variance. But where did that number come from?</p>
-                <p>We calculate this using the <b>Eigenvalues ($\\lambda$)</b> from Step 3. An eigenvalue tells us exactly how much "story" or information its corresponding principal component captures.</p>
+                <p>We calculate this using the <b>Eigenvalues ($\\lambda$)</b> from Step 4. An eigenvalue tells us exactly how much "story" or information its corresponding principal component captures.</p>
                 <ul class="list-disc pl-5 mt-4 space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-100">
                     <li><b>PC1 (Kept):</b> $\\lambda_1 = 4.30$</li>
                     <li><b>PC2 (Dropped):</b> $\\lambda_2 = 0.70$</li>
@@ -237,9 +313,9 @@ const steps = [
         `
     },
     {
-        title: "Step 7: The Python Shortcut",
+        title: "Step 9: The Python Shortcut",
         text: `<p>In the real world, Data Scientists rarely calculate eigenvalues by hand. Instead, we use a powerful machine learning library in Python called <b>scikit-learn</b>.</p>
-                <p>What took us 6 detailed mathematical steps can be executed in just a few lines of code!</p>
+                <p>What took us 8 detailed mathematical steps can be executed in just a few lines of code!</p>
                 <ul class="list-disc pl-5 mt-4 space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-100 text-sm">
                     <li><b><code class="text-indigo-600 bg-indigo-50 px-1 rounded">PCA(n_components=1)</code>:</b> Tells the algorithm we want to drop from 2D down to 1D.</li>
                     <li><b><code class="text-indigo-600 bg-indigo-50 px-1 rounded">fit_transform(X)</code>:</b> This one function does everything automatically: mean centering, building the covariance matrix, finding eigenvectors, and projecting the data!</li>
